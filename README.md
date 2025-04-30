@@ -1,6 +1,24 @@
 # 🧪 Medilab – Web-Based Medical Laboratory Management System
 
-Medilab is a full-stack web application built to streamline and digitize diagnostic lab operations. It handles everything from patient registration and inventory-aware appointment booking to technician test result entry and patient report access. Designed with modularity, efficiency, and real-world workflows in mind, this system is ideal for small to mid-sized medical labs.
+![GitHub repo size](https://img.shields.io/github/repo-size/yourusername/medilab)
+![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/medilab)
+![Issues](https://img.shields.io/github/issues/yourusername/medilab)
+![Forks](https://img.shields.io/github/forks/yourusername/medilab?style=social)
+![Stars](https://img.shields.io/github/stars/yourusername/medilab?style=social)
+
+> 💡 A complete, end-to-end solution for managing patient registration, appointment scheduling, technician test entry, and report generation for medical labs.
+
+---
+
+## 📌 Table of Contents
+
+- [🚀 Features](#-features)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🗂️ Project Structure](#️-project-structure)
+- [⚙️ Setup Instructions](#️-setup-instructions)
+- [✅ Future Enhancements](#-future-enhancements)
+- [📄 License](#-license)
+- [🙋‍♂️ Author](#-author)
 
 ---
 
@@ -8,33 +26,32 @@ Medilab is a full-stack web application built to streamline and digitize diagnos
 
 ### 🧍 Patient Management
 - Register patients via an intuitive web form.
-- Automatically schedule appointments if the required test kits are available.
+- Automatically schedules appointments if required test kits are available.
 
 ### 📦 Inventory-Aware Scheduling
-- Checks inventory in real-time (`available_kits`) before booking an appointment.
-- Prevents overbooking and ensures kits are only assigned when available.
+- Checks real-time kit availability before confirming appointments.
+- Prevents overbooking and preserves resources.
 
 ### 👨‍🔬 Technician Workflow
 - Secure technician login.
-- Appointments are shown by oldest-first policy.
-- Only relevant test fields (e.g., COVID, Sugar) are enabled for input.
-- Automatically stores `NULL` for tests not requested.
+- Appointments appear in order of oldest first.
+- Input fields for test parameters are dynamically enabled based on appointment type.
+- Stores `NULL` for unrequested tests to ensure clean database structure.
 
 ### 📄 Report Generation
-- Test results are entered into `Reports` and `Test_Results` tables.
-- Patients can check their report online.
-- Displays a friendly message if the report is not yet completed.
+- Patients can check their test results via a report interface.
+- Shows a user-friendly message if the report is still pending.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer       | Technology                  |
-|-------------|-----------------------------|
-| Frontend    | HTML5, CSS3, JavaScript     |
-| Backend     | Node.js, Express.js         |
-| Database    | SQL Server (via msnodesqlv8)|
-| Validation  | express-validator           |
+| Layer         | Technology                      |
+|---------------|----------------------------------|
+| Frontend      | HTML5, CSS3, JavaScript          |
+| Backend       | Node.js, Express.js              |
+| Database      | Microsoft SQL Server (msnodesqlv8) |
+| Validation    | express-validator                |
 
 ---
 
