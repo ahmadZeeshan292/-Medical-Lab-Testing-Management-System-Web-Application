@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    main {
+      flex: 1;
+    }
+
+    /* Modal Style */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      overflow: auto;
+      padding-top: 60px;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Patient Dashboard - Diagnostic Center</title>
+
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets/css/main.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header id="header" class="header sticky-top">
+  <div class="topbar d-flex align-items-center">
+    <div class="container d-flex justify-content-center justify-content-md-between">
+      <div class="contact-info d-flex align-items-center">
+        <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@diagnostic.com">contact@diagnostic.com</a></i>
+        <i class="bi bi-phone d-flex align-items-center ms-4"><span>+1 5589 55488 55</span></i>
+      </div>
+    </div>
+  </div>
+  <div class="branding d-flex align-items-center">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+      <a href="home-logged-in.html" class="logo d-flex align-items-center me-auto">
+        <h1 class="sitename">Diagnostic Center</h1>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <section class="section py-5">
+    <div class="container">
+      <div class="mb-5 text-center">
+        <h2 class="fw-bold">Welcome, Patient</h2>
+        <p class="text-muted">Here are your upcoming appointments</p>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered text-center">
+          <thead class="table-primary">
+            <tr>
+              <th>#</th>
+              <th>Test Type</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+              <th style="display:none;">Appointment ID</th>
+            </tr>
+          </thead>
+          <tbody id="appointmentsTableBody">
+            <!-- Appointments will be inserted here dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-center mt-4">
+        <a id="bookAppointmentBtn" href="appointment.html" class="btn btn-primary">Book Another Appointment</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- View Report Modal -->
+<div id="reportModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Report Details</h2>
+    <div id="reportDetails"></div>
+  </div>
+</div>
+
+<footer id="footer" class="footer light-background mt-5">
+  <div class="container text-center">
+    <p>&copy; 2025 Diagnostic Center. All Rights Reserved</p>
+  </div>
+</footer>
+
+<!-- JS Libraries -->
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/aos/aos.js"></script>
+<script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="assets/js/main.js"></script>
+
+<!-- Custom Script -->
+<script>
+  // When the page loads
+  window.addEventListener('DOMContentLoaded', async () => {
+    console.log('Page Loaded!');
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get('patient_id');
+    const patientName = urlParams.get('name');
+
+    const welcomeText = document.querySelector('h2.fw-bold');
+    if (welcomeText) {
+      welcomeText.textContent = patientName ? `Welcome, ${patientName}` : 'Welcome, Patient';
+    } else {
+      console.error('No element with class "fw-bold" found for welcome text.');
+    }
+
+    if (patientId) {
+      try {
+        const response = await fetch('/reports/get-summary', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            patient_id: String(patientId),
+          })
+        });
+
+        const data = await response.json();
+        populateAppointments(data);  // ✅ call function to populate table
+      } catch (error) {
+        console.error('Error fetching appointments summary:', error);
+      }
+    } else {
+      alert('No patient_id found in URL.');
+      console.error('No patient_id found in URL.');
+    }
+  });
+
+  // Function to populate the appointments table
+  function populateAppointments(appointments) {
+    const tableBody = document.getElementById('appointmentsTableBody');
+    tableBody.innerHTML = ''; // Clear previous data
+
+    if (appointments.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="5" class="text-center">No appointments found.</td></tr>`;
+      return;
+    }
+
+    appointments.forEach((appointment, index) => {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${appointment.test_name || '-'}</td>
+        <td>${formatDate(appointment.timeslot) || '-'}</td>
+        <td>${appointment.status || '-'}</td>
+        <td><button class="btn btn-sm btn-primary view-report-btn" data-test-type="${appointment.test_name}" data-patient-id="${appointment.patient_id}">View</button></td>
+        <td style="display:none;">${appointment.appointment_id}</td>
+      `;
+
+      tableBody.appendChild(tr);
+    });
+
+    // Add event listeners to all "View" buttons
+    document.querySelectorAll('.view-report-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('patient_id');
+        const testType = this.getAttribute('data-test-type');
+
+        const row = this.closest('tr'); // Get the row of the clicked button
+        const appointmentId = row.cells[5].textContent; // Get hidden appointment_id from 6th column (index 5)
+        
+        // Send the patient_id and test_type to the server
+        viewReport(appointmentId);
+      });
+    });
+  }
+
+  // Helper function to format the date nicely
+  function formatDate(timeslot) {
+    if (!timeslot) return '-';
+    const date = new Date(timeslot);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    }) + ' ' + date.toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  // Function to handle "View Report" button click
+  async function viewReport(appointment_id) {
+  try {
+    const response = await fetch('/reports/get-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        appointment_id: appointment_id
+      })
+    });
+
+    // Check if the response is OK (status 200-299)
+    if (!response.ok) {
+      alert(`Error fetching report: ${response.statusText}`);
+      alert('Failed to fetch report. Please try again later.');
+      return;
+    }
+
+    const data = await response.json();
+    const reportData = data.data; 
+
+    if (reportData && reportData.length > 0) {
+      showReportModal(reportData); 
+    } else {
+      showEmptyReport(); // Show an empty report if no data is available
+    }
+
+  } catch (error) {
+    console.error('Error retrieving report:', error);
+    alert(`Error retrieving report. Please try again. ${error}`);
+    showEmptyReport(); // In case of an error, show an empty report
+  }
+}
+
+  // Function to display report in modal
+  function showReportModal(data) {
+    const modal = document.getElementById('reportModal');
+    const reportDetails = document.getElementById('reportDetails');
+
+    // Create formatted content for the report
+    let reportContent = `<h3>${data.testType} Report</h3>`;
+
+    if (data.length > 0) {
+      data.forEach(param => {
+        reportContent += `<p><strong>${param.parameter}:</strong> ${param.value}</p>`;
+      });
+    } else {
+      reportContent += `<p>No report parameters available.</p>`;
+    }
+
+    // Append test date if available
+    if (data[0].timeslot) {
+      reportContent += `<p><strong>Test Date:</strong> ${formatDate(data[0].timeslot)}</p>`;
+    } else {
+      reportContent += `<p><strong>Test Date:</strong> Not available</p>`;
+    }
+
+    reportDetails.innerHTML = reportContent;
+    modal.style.display = 'block';
+  }
+
+  // Function to handle empty report
+  function showEmptyReport() {
+    const modal = document.getElementById('reportModal');
+    const reportDetails = document.getElementById('reportDetails');
+    reportDetails.innerHTML = `<p>No report data available.</p>`;
+    modal.style.display = 'block';
+  }
+
+  // Helper function to format the date
+  function formatDate(timeslot) {
+    if (!timeslot) return 'N/A';
+    const date = new Date(timeslot);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'short', day: 'numeric'
+    }) + ' ' + date.toLocaleTimeString('en-US', {
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  // Close modal when the close button is clicked
+  const closeModal = document.querySelector('.close');
+  if (closeModal) {
+    closeModal.addEventListener('click', function () {
+      document.getElementById('reportModal').style.display = 'none';
+    });
+  }
+
+  // Close modal when clicking outside the modal content
+  window.addEventListener('click', function (event) {
+    if (event.target === document.getElementById('reportModal')) {
+      document.getElementById('reportModal').style.display = 'none';
+    }
+  });
+</script>
+
+<script>
+  window.onload = function() {
+    // Extract the patient ID or name from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const patientId = urlParams.get('patient_id'); // Assuming the URL has 'patient_id' parameter
+    const patientName = urlParams.get('name'); // Assuming the URL has 'name' parameter
+
+    // Check if patientId exists in the URL and dynamically update the href
+    if (patientId) {
+      const appointmentLink = document.getElementById('bookAppointmentBtn');
+      appointmentLink.href = `appointment.html?patient_id=${patientId}&name=${patientName || ''}`;
+    }
+  };
+</script>
+</body>
+
+</html>
