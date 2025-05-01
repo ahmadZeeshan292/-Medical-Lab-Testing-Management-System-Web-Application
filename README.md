@@ -93,7 +93,7 @@ This ensures that test results are properly logged and tracked, and patients rec
 
 To download and run this project:
 
-1. [Download the ZIP file](ahmadZeeshan292/-Medical-Lab-Testing-Management-System-Web-Application/blob/main/db-project_v4.zip) containing the full project.
+1. [Download the ZIP file](-Medical-Lab-Testing-Management-System-Web-Application/blob/main/db-project_v4.zip) containing the full project.
 2. **Extract the contents** of the ZIP file to a directory of your choice.
 3. Follow the **Setup Instructions** to install dependencies and configure your database connection.
 
