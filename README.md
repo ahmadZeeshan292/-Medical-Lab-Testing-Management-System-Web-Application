@@ -3,7 +3,6 @@
 ![Node.js](https://img.shields.io/badge/Node.js-Express-green.svg)  
 ![SQL Server](https://img.shields.io/badge/Database-SQL--Server-blue.svg)  
 ![JavaScript](https://img.shields.io/badge/Language-JavaScript-yellow.svg)  
-![Status](https://img.shields.io/badge/Status-Active-success.svg)
 
 ---
 
